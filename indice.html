@@ -7,32 +7,49 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background: linear-gradient(135deg, #1a237e, #283593, #3949ab); min-height: 100vh; padding: 20px; color: #fff; }
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 800px; margin: 0 auto; }
         header { text-align: center; padding: 30px 0; }
         header h1 { font-size: 2.5rem; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
-        .card { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-        h2 { color: #ffd700; margin-bottom: 25px; text-align: center; }
+        .navegacion { text-align: center; margin-bottom: 30px; }
+        .card { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 30px; margin-bottom: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        h2 { color: #ffd700; margin-bottom: 20px; border-bottom: 2px solid rgba(255,215,0,0.3); padding-bottom: 10px; }
         label { font-weight: bold; display: block; margin-top: 15px; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; background: rgba(255,255,255,0.9); font-size: 15px; color: #1a237e; }
-        button { width: 100%; padding: 14px 25px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: all 0.3s; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; transition: all 0.3s; }
         button:hover { transform: translateY(-2px); }
         .btn-oro { background: linear-gradient(90deg, #ffd700, #ffc107); color: #1a237e; }
-        .mensaje { padding: 15px; border-radius: 8px; margin-top: 20px; display: none; text-align: center; }
+        .btn-verde { background: #4caf50; color: white; }
+        .btn-rojo { background: #f44336; color: white; }
+        .btn-azul { background: #2196f3; color: white; }
+        .oculto { display: none !important; }
+        .mensaje { padding: 15px; border-radius: 8px; margin: 10px 0; display: none; }
         .exito { background: rgba(76,175,80,0.3); display: block; }
         .error { background: rgba(244,67,54,0.3); display: block; }
-        code { background: #000; padding: 4px 8px; border-radius: 4px; font-size: 16px; }
+        .etiqueta { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-left: 10px; }
+        .et-abierto { background: #4caf50; }
+        .et-cerrado { background: #ff9800; }
+        .et-finalizado { background: #9e9e9e; }
+        code { background: #000; padding: 6px 12px; border-radius: 6px; font-size: 18px; cursor: pointer; }
+        code:hover { background: #222; }
+        .ganador { font-size: 1.4rem; color: #ffd700; font-weight: bold; margin: 10px 0; text-align: center; }
+        .cargando { text-align: center; padding: 20px; color: #ffd700; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🎰 CREAR SORTEO</h1>
+        <h1>🎰 PLATAFORMA DE SORTEOS</h1>
     </header>
 
-    <div class="card">
-        <h2>➕ Nuevo Sorteo</h2>
-        
+    <div class="navegacion">
+        <button class="btn-oro" onclick="mostrarSeccion('crear')">➕ Crear Sorteo</button>
+        <button class="btn-verde" onclick="mostrarSeccion('participar')">🎁 Participar</button>
+    </div>
+
+    <!-- SECCIÓN: CREAR SORTEO -->
+    <div id="sec-crear" class="seccion card">
+        <h2>➕ Crear Nuevo Sorteo</h2>
         <label>Nombre del Sorteo:</label>
         <input type="text" id="s-nombre" placeholder="Ej: Sorteo de Aniversario">
         
@@ -43,11 +60,49 @@
         <textarea id="s-desc" rows="4" placeholder="Requisitos, fechas, condiciones..."></textarea>
         
         <label>Cantidad de Ganadores:</label>
-        <input type="number" id="s-ganadores" value="1" min="1" max="5">
+        <input type="number" id="s-ganadores" value="1" min="1" max="10">
         
         <button class="btn-oro" onclick="crearSorteo()">🚀 Crear Sorteo</button>
-        
         <div id="msg-crear" class="mensaje"></div>
+    </div>
+
+    <!-- SECCIÓN: PARTICIPAR POR CÓDIGO -->
+    <div id="sec-participar" class="seccion card oculto">
+        <h2>🎁 Participar por Código</h2>
+        <p>Escribe el código del sorteo:</p>
+        <input type="text" id="buscar-codigo" placeholder="Ej: SOR-VVNAZW" style="text-transform: uppercase;">
+        <button class="btn-azul" onclick="buscarSorteo()">🔍 Buscar</button>
+        <div id="cargando" class="cargando oculto">Buscando...</div>
+        
+        <div id="ficha" class="oculto" style="margin-top: 25px;">
+            <h3 id="f-nombre"></h3>
+            <p><strong>Premio:</strong> <span id="f-premio"></span></p>
+            <p id="f-desc" style="margin: 10px 0;"></p>
+            <p>Estado: <span id="f-estado" class="etiqueta"></span></p>
+            <p>Participantes inscritos: <span id="f-cant"></span></p>
+            
+            <div id="form-inscribir" class="oculto" style="margin-top: 20px;">
+                <label>Tu Nombre Completo:</label>
+                <input type="text" id="mi-nombre" placeholder="Escribe tu nombre">
+                <label>Tu Correo:</label>
+                <input type="email" id="mi-correo" placeholder="tu@email.com">
+                <button class="btn-verde" onclick="inscribirme()">✅ Inscribirme</button>
+                <div id="msg-ins" class="mensaje"></div>
+            </div>
+            
+            <div id="area-ganadores" class="oculto" style="margin-top: 25px;">
+                <h3 style="text-align:center;">🏆 GANADORES</h3>
+                <div id="lista-ganadores"></div>
+            </div>
+            
+            <div id="area-admin" class="oculto" style="margin-top: 25px; border-top: 1px solid #444; padding-top: 20px;">
+                <h3>🔐 Panel de Control</h3>
+                <button class="btn-azul" onclick="cerrarInscripcion()">🔒 Cerrar Inscripciones</button>
+                <button class="btn-oro" onclick="hacerSorteo()">🎊 Realizar Sorteo</button>
+                <h4>Lista de Participantes:</h4>
+                <div id="lista-part" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -67,8 +122,21 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let sorteoActivo = null;
+let suscripcion = null;
+
 function generarCodigo() {
   return 'SOR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+function mostrarSeccion(nombre) {
+  if (suscripcion) suscripcion();
+  suscripcion = null;
+  sorteoActivo = null;
+  
+  document.querySelectorAll('.seccion').forEach(s => s.classList.add('oculto'));
+  document.getElementById(`sec-${nombre}`).classList.remove('oculto');
+  document.querySelectorAll('.mensaje').forEach(m => { m.className = 'mensaje'; m.textContent = ''; });
 }
 
 async function crearSorteo() {
@@ -93,7 +161,7 @@ async function crearSorteo() {
 
   try {
     await db.collection('sorteos').add(nuevo);
-    msg.innerHTML = `✅ <strong>Creado con éxito!</strong><br><br>Código para compartir:<br><code>${nuevo.codigo}</code>`;
+    msg.innerHTML = `✅ <strong>Creado con éxito!</strong><br><br>Código:<br><code onclick="navigator.clipboard.writeText('${nuevo.codigo}'); alert('¡Copiado!')">${nuevo.codigo}</code>`;
     msg.className = 'mensaje exito';
     document.getElementById('s-nombre').value = '';
     document.getElementById('s-premio').value = '';
@@ -102,6 +170,117 @@ async function crearSorteo() {
     msg.textContent = '❌ Error: ' + err.message;
     msg.className = 'mensaje error';
   }
+}
+
+async function buscarSorteo() {
+  const codigo = document.getElementById('buscar-codigo').value.trim().toUpperCase();
+  const cargando = document.getElementById('cargando');
+  const ficha = document.getElementById('ficha');
+  
+  if (!codigo) { alert('Escribe un código'); return; }
+  
+  cargando.classList.remove('oculto');
+  ficha.classList.add('oculto');
+
+  try {
+    const snap = await db.collection('sorteos').where('codigo', '==', codigo).get();
+    cargando.classList.add('oculto');
+    
+    if (snap.empty) { alert('❌ No existe ese sorteo'); return; }
+    
+    const doc = snap.docs[0];
+    sorteoActivo = { id: doc.id, ...doc.data() };
+    
+    suscripcion = db.collection('sorteos').doc(sorteoActivo.id).onSnapshot(d => {
+      if (!d.exists) return;
+      sorteoActivo = { id: d.id, ...d.data() };
+      actualizarFicha();
+    });
+  } catch (err) {
+    cargando.classList.add('oculto');
+    alert('Error: ' + err.message);
+  }
+}
+
+function actualizarFicha() {
+  const s = sorteoActivo;
+  document.getElementById('f-nombre').textContent = s.nombre;
+  document.getElementById('f-premio').textContent = s.premio;
+  document.getElementById('f-desc').textContent = s.descripcion || 'Sin descripción';
+  document.getElementById('f-estado').textContent = s.estado.toUpperCase();
+  document.getElementById('f-estado').className = `etiqueta et-${s.estado}`;
+  document.getElementById('f-cant').textContent = s.participantes.length;
+  
+  document.getElementById('ficha').classList.remove('oculto');
+  document.getElementById('form-inscribir').classList.toggle('oculto', s.estado !== 'abierto');
+  document.getElementById('area-admin').classList.toggle('oculto', s.estado === 'abierto');
+  document.getElementById('area-ganadores').classList.toggle('oculto', s.estado !== 'finalizado');
+  
+  document.getElementById('lista-part').innerHTML = s.participantes.length
+    ? s.participantes.map(p => `<p>✅ ${p.nombre} — ${p.correo}</p>`).join('')
+    : '<p style="color:#999;">Sin participantes</p>';
+  
+  if (s.estado === 'finalizado') {
+    document.getElementById('lista-ganadores').innerHTML = 
+      s.ganadores.map(g => `<p class="ganador">🏆 ${g.nombre}</p>`).join('');
+  }
+}
+
+async function inscribirme() {
+  const nombre = document.getElementById('mi-nombre').value.trim();
+  const correo = document.getElementById('mi-correo').value.trim();
+  const msg = document.getElementById('msg-ins');
+  
+  if (!nombre || !correo) {
+    msg.textContent = '⚠️ Escribe tu nombre y correo';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
+  try {
+    await db.collection('sorteos').doc(sorteoActivo.id).update({
+      participantes: firebase.firestore.FieldValue.arrayUnion({
+        nombre, correo, fecha: new Date().toISOString()
+      })
+    });
+    msg.textContent = '✅ ¡Inscrito con éxito!';
+    msg.className = 'mensaje exito';
+    document.getElementById('mi-nombre').value = '';
+    document.getElementById('mi-correo').value = '';
+  } catch (err) {
+    msg.textContent = '❌ Error: ' + err.message;
+    msg.className = 'mensaje error';
+  }
+}
+
+async function cerrarInscripcion() {
+  if (!confirm('¿Cerrar inscripciones? Ya no se aceptan más.')) return;
+  await db.collection('sorteos').doc(sorteoActivo.id).update({ estado: 'cerrado' });
+  alert('✅ Inscripciones cerradas');
+}
+
+async function hacerSorteo() {
+  if (!sorteoActivo || sorteoActivo.participantes.length === 0) {
+    alert('⚠️ No hay participantes');
+    return;
+  }
+  if (!confirm('¿Realizar el sorteo ahora?')) return;
+  
+  const ganadores = [];
+  const copia = [...sorteoActivo.participantes];
+  const cant = Math.min(sorteoActivo.cantGanadores, copia.length);
+  
+  for (let i = 0; i < cant; i++) {
+    const idx = Math.floor(Math.random() * copia.length);
+    ganadores.push(copia.splice(idx, 1)[0]);
+  }
+  
+  await db.collection('sorteos').doc(sorteoActivo.id).update({
+    ganadores: ganadores,
+    estado: 'finalizado'
+  });
+  
+  alert('🎉 ¡Sorteo realizado! Ve la lista de ganadores');
 }
 </script>
 
