@@ -159,7 +159,7 @@
 
 <script>
 // ==============================================
-// TU CONFIGURACIÓN DE FIREBASE - LISTA ✅
+// TU CONFIGURACIÓN DE FIREBASE ✅
 // ==============================================
 const firebaseConfig = {
   apiKey: "AIzaSyBjNhAZE_Rkt-K3PU3wq6g-0K3XX6j6j4",
@@ -170,25 +170,20 @@ const firebaseConfig = {
   appId: "1:473130628058:web:4d6b89989392b3c332c6e3"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Variables globales
 let sorteoActual = null;
 let suscriptor = null;
 
-// Generar código único
 function generarCodigo() {
   return 'SOR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-// Limpiar mensajes
 function limpiarMensajes() {
   document.querySelectorAll('.mensaje').forEach(m => { m.className = 'mensaje'; m.textContent = ''; });
 }
 
-// Cambiar de sección
 function mostrarSeccion(nombre) {
   if (suscriptor) suscriptor();
   document.querySelectorAll('.seccion').forEach(s => s.classList.add('oculto'));
@@ -198,9 +193,6 @@ function mostrarSeccion(nombre) {
   if (nombre === 'publicos') listarSorteosPublicos();
 }
 
-// ==============================================
-// CREAR SORTEO
-// ==============================================
 async function crearSorteo() {
   const nombre = document.getElementById('s-nombre').value.trim();
   const premio = document.getElementById('s-premio').value.trim();
@@ -238,9 +230,6 @@ async function crearSorteo() {
   setTimeout(() => mostrarSeccion('publicos'), 2500);
 }
 
-// ==============================================
-// LISTAR SORTEOS EN TIEMPO REAL
-// ==============================================
 function listarSorteosPublicos() {
   const cont = document.getElementById('grid-publicos');
   const vacio = document.getElementById('sin-sorteos');
@@ -278,9 +267,6 @@ function listarSorteosPublicos() {
     });
 }
 
-// ==============================================
-// VER DETALLE DE SORTEO
-// ==============================================
 async function verDetalle(id) {
   if (suscriptor) suscriptor();
   
@@ -303,6 +289,189 @@ async function verDetalle(id) {
     document.getElementById('det-estado').textContent = s.estado.toUpperCase();
     document.getElementById('det-estado').className = `etiqueta et-${s.estado}`;
     
-    // Mostrar/ocultar secciones según estado
     document.getElementById('area-inscripcion').classList.toggle('oculto', s.estado !== 'abierto');
-    document.getElementById('area-admin').classList.toggle('oculto', s.estado ===
+    document.getElementById('area-admin').classList.toggle('oculto', s.estado === 'abierto');
+    document.getElementById('area-resultado').classList.toggle('oculto', s.estado !== 'finalizado');
+    
+    const lista = document.getElementById('lista-participantes');
+    lista.innerHTML = s.participantes.length 
+      ? s.participantes.map(p => `<p>✅ ${p.nombre} — ${p.correo}</p>`).join('')
+      : '<p style="color:#999;">Sin participantes aún</p>';
+  });
+}
+
+async function inscribirme() {
+  const nombre = document.getElementById('part-nombre').value.trim();
+  const correo = document.getElementById('part-correo').value.trim();
+  const msg = document.getElementById('msg-inscribir');
+  
+  if (!nombre || !correo) {
+    msg.textContent = '⚠️ Escribe tu nombre y correo';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
+  try {
+    const docRef = db.collection('sorteos').doc(sorteoActual.id);
+    await docRef.update({
+      participantes:
+                participantes: firebase.firestore.FieldValue.arrayUnion({
+        nombre,
+        correo,
+        fecha: new Date().toISOString()
+      })
+    });
+    
+    msg.textContent = '✅ ¡Te inscribiste con éxito!';
+    msg.className = 'mensaje exito';
+    document.getElementById('part-nombre').value = '';
+    document.getElementById('part-correo').value = '';
+    
+  } catch (err) {
+    console.error(err);
+    msg.textContent = '❌ Error: ' + err.message;
+    msg.className = 'mensaje error';
+  }
+}
+
+async function cerrarInscripcion() {
+  if (!confirm('¿Cerrar las inscripciones? Ya no se aceptarán más participantes.')) return;
+  
+  try {
+    await db.collection('sorteos').doc(sorteoActual.id).update({
+      estado: 'cerrado'
+    });
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+async function realizarSorteo() {
+  if (!sorteoActual || sorteoActual.participantes.length === 0) {
+    alert('⚠️ No hay participantes para sortear');
+    return;
+  }
+  
+  if (!confirm('¿Realizar el sorteo ahora?')) return;
+  
+  // Animación
+  const anim = document.getElementById('animacion-sorteo');
+  const ruleta = document.getElementById('ruleta');
+  anim.classList.remove('oculto');
+  
+  const nombres = sorteoActual.participantes.map(p => p.nombre);
+  let cont = 0;
+  const girar = setInterval(() => {
+    ruleta.textContent = nombres[Math.floor(Math.random() * nombres.length)];
+    if (++cont > 20) clearInterval(girar);
+  }, 100);
+  
+  // Seleccionar ganadores
+  await new Promise(res => setTimeout(res, 2500));
+  
+  const ganadores = [];
+  const copia = [...sorteoActual.participantes];
+  for (let i = 0; i < Math.min(sorteoActual.cantGanadores, copia.length); i++) {
+    const idx = Math.floor(Math.random() * copia.length);
+    ganadores.push(copia.splice(idx, 1)[0]);
+  }
+  
+  // Guardar resultado
+  await db.collection('sorteos').doc(sorteoActual.id).update({
+    estado: 'finalizado',
+    ganadores
+  });
+  
+  anim.classList.add('oculto');
+}
+
+async function buscarPorCodigo() {
+  const codigo = document.getElementById('buscar-codigo').value.trim().toUpperCase();
+  const cargando = document.getElementById('cargando-buscar');
+  const ficha = document.getElementById('ficha-sorteo');
+  const msg = document.getElementById('msg-part');
+  
+  if (!codigo) {
+    msg.textContent = '⚠️ Escribe un código';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
+  cargando.classList.remove('oculto');
+  ficha.classList.add('oculto');
+  msg.className = 'mensaje'; msg.textContent = '';
+  
+  try {
+    const snap = await db.collection('sorteos')
+      .where('codigo', '==', codigo)
+      .limit(1)
+      .get();
+    
+    cargando.classList.add('oculto');
+    
+    if (snap.empty) {
+      msg.textContent = '❌ Código no encontrado';
+      msg.className = 'mensaje error';
+      return;
+    }
+    
+    const doc = snap.docs[0];
+    const s = { id: doc.id, ...doc.data() };
+    
+    document.getElementById('ficha-nombre').textContent = s.nombre;
+    document.getElementById('ficha-premio').textContent = s.premio;
+    document.getElementById('ficha-desc').textContent = s.descripcion || 'Sin descripción';
+    document.getElementById('ficha-estado').textContent = s.estado.toUpperCase();
+    document.getElementById('ficha-estado').className = `etiqueta et-${s.estado}`;
+    
+    // Guardar ID para inscribir
+    document.getElementById('ficha-sorteo').dataset.id = s.id;
+    
+    ficha.classList.remove('oculto');
+    
+  } catch (err) {
+    cargando.classList.add('oculto');
+    msg.textContent = 'Error: ' + err.message;
+    msg.className = 'mensaje error';
+  }
+}
+
+async function participar() {
+  const id = document.getElementById('ficha-sorteo').dataset.id;
+  const nombre = document.getElementById('mi-nombre').value.trim();
+  const correo = document.getElementById('mi-correo').value.trim();
+  const msg = document.getElementById('msg-part');
+  
+  if (!nombre || !correo) {
+    msg.textContent = '⚠️ Completa todos los campos';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
+  try {
+    const ref = db.collection('sorteos').doc(id);
+    await ref.update({
+      participantes: firebase.firestore.FieldValue.arrayUnion({
+        nombre, correo, fecha: new Date().toISOString()
+      })
+    });
+    
+    msg.textContent = '✅ ¡Inscrito con éxito!';
+    msg.className = 'mensaje exito';
+    document.getElementById('mi-nombre').value = '';
+    document.getElementById('mi-correo').value = '';
+    
+  } catch (err) {
+    msg.textContent = 'Error: ' + err.message;
+    msg.className = 'mensaje error';
+  }
+}
+
+function cerrarDetalle() {
+  if (suscriptor) suscriptor();
+  mostrarSeccion('publicos');
+}
+</script>
+
+</body>
+</html>
