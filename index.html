@@ -14,11 +14,7 @@
         }
         .container { max-width: 800px; margin: 0 auto; }
         header { text-align: center; padding: 30px 0; }
-        header h1 { 
-            font-size: 2.5rem; 
-            color: #ffd700; 
-            text-shadow: 0 0 20px rgba(255,215,0,0.5); 
-        }
+        header h1 { font-size: 2.5rem; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
         .navegacion { text-align: center; margin-bottom: 30px; }
         .card { 
             background: rgba(255,255,255,0.1); 
@@ -28,85 +24,80 @@
             backdrop-filter: blur(10px); 
             border: 1px solid rgba(255,255,255,0.2); 
         }
-        h2 { 
-            color: #ffd700; 
-            margin-bottom: 20px; 
-            border-bottom: 2px solid rgba(255,215,0,0.3); 
-            padding-bottom: 10px; 
-        }
+        h2 { color: #ffd700; margin-bottom: 20px; border-bottom: 2px solid rgba(255,215,0,0.3); padding-bottom: 10px; }
         label { font-weight: bold; display: block; margin-top: 15px; }
         input, textarea { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 8px 0; 
-            border-radius: 8px; 
-            border: none; 
-            background: rgba(255,255,255,0.9); 
-            font-size: 15px; 
-            color: #1a237e; 
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; 
+            background: rgba(255,255,255,0.9); font-size: 15px; color: #1a237e; 
         }
         button { 
-            padding: 12px 25px; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin: 5px; 
-            transition: all 0.3s; 
+            padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; 
+            font-weight: bold; cursor: pointer; margin: 5px; transition: all 0.3s; 
         }
         button:hover { transform: translateY(-2px); }
         .btn-oro { background: linear-gradient(90deg, #ffd700, #ffc107); color: #1a237e; }
         .btn-verde { background: #4caf50; color: white; }
         .btn-azul { background: #2196f3; color: white; }
+        .btn-rojo { background: #f44336; color: white; }
         .oculto { display: none !important; }
         .mensaje { padding: 15px; border-radius: 8px; margin: 10px 0; display: none; }
         .exito { background: rgba(76,175,80,0.3); display: block; }
         .error { background: rgba(244,67,54,0.3); display: block; }
         .etiqueta { 
-            display: inline-block; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 13px; 
-            font-weight: bold; 
-            margin-left: 10px; 
+            display: inline-block; padding: 4px 12px; border-radius: 20px; 
+            font-size: 13px; font-weight: bold; margin-left: 10px; 
         }
         .et-abierto { background: #4caf50; }
         .et-cerrado { background: #ff9800; }
         .et-finalizado { background: #9e9e9e; }
         code { 
-            background: #000; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 18px; 
-            cursor: pointer; 
-            display: inline-block;
-            margin: 5px 0;
+            background: #000; padding: 6px 12px; border-radius: 6px; font-size: 18px; 
+            cursor: pointer; display: inline-block; margin: 5px 0; 
         }
         code:hover { background: #222; }
-        .ganador { 
-            font-size: 1.4rem; 
-            color: #ffd700; 
-            font-weight: bold; 
-            margin: 10px 0; 
-            text-align: center; 
-        }
+        .ganador { font-size: 1.6rem; color: #ffd700; font-weight: bold; margin: 15px 0; text-align: center; }
         .cargando { text-align: center; padding: 20px; color: #ffd700; }
         .aviso { font-size: 0.85rem; color: #ffd700; margin-top: 10px; line-height: 1.5; }
         .copiado { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            background: #4caf50; 
-            padding: 10px 20px; 
-            border-radius: 8px; 
-            z-index: 1000; 
+            position: fixed; top: 20px; right: 20px; background: #4caf50; 
+            padding: 10px 20px; border-radius: 8px; z-index: 1000; 
             animation: aparecer 0.3s ease;
         }
         @keyframes aparecer {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* --- ESTILOS DE LA RULETA --- */
+        .ruleta-contenedor { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        .ruleta {
+            width: 100%; height: 100%; border-radius: 50%; position: relative;
+            border: 8px solid #ffd700; box-shadow: 0 0 25px rgba(255,215,0,0.5);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            background: conic-gradient(
+                #ffd700 0deg 45deg, #1a237e 45deg 90deg,
+                #ffd700 90deg 135deg, #1a237e 135deg 180deg,
+                #ffd700 180deg 225deg, #1a237e 225deg 270deg,
+                #ffd700 270deg 315deg, #1a237e 315deg 360deg
+            );
+        }
+        .ruleta-girando { animation: ninguna; }
+        .indicador {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 20px solid transparent;
+            border-right: 20px solid transparent; border-top: 30px solid #ffd700;
+            z-index: 10; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+        }
+        .nombre-ruleta {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #000;
+            pointer-events: none;
+        }
+        .ventana { border: 2px solid rgba(255,215,0,0.4); }
+        .cuenta-regresiva { font-size: 2rem; text-align: center; color: #ffd700; font-weight: bold; margin: 15px 0; }
+        .lista-final { margin-top: 15px; }
+        .lista-final p { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
@@ -119,6 +110,9 @@
     <div class="navegacion">
         <button class="btn-oro" onclick="mostrarSeccion('crear')">➕ Crear Sorteo</button>
         <button class="btn-verde" onclick="mostrarSeccion('participar')">🎁 Participar</button>
+        <button class="btn-azul" onclick="mostrarSeccion('cierre')">🔒 Cierre de Registros</button>
+        <button class="btn-oro" onclick="mostrarSeccion('ruleta')">🎡 Ruleta Automática</button>
+        <button class="btn-verde" onclick="mostrarSeccion('ganadores')">🏆 Ganadores</button>
     </div>
 
     <!-- SECCIÓN: CREAR SORTEO -->
@@ -138,10 +132,10 @@
         
         <button class="btn-oro" onclick="crearSorteo()">🚀 Crear Sorteo</button>
         <div id="msg-crear" class="mensaje"></div>
-        <p class="aviso">⚠️ Guarda el código generado — es tu llave de administración. No lo compartas con personas que no desees.</p>
+        <p class="aviso">⚠️ Guarda el código generado — es tu llave de administración.</p>
     </div>
 
-    <!-- SECCIÓN: PARTICIPAR POR CÓDIGO -->
+    <!-- SECCIÓN: PARTICIPAR -->
     <div id="sec-participar" class="seccion card oculto">
         <h2>🎁 Participar por Código</h2>
         <p>Escribe el código del sorteo:</p>
@@ -164,19 +158,84 @@
                 <button class="btn-verde" onclick="inscribirme()">✅ Inscribirme</button>
                 <div id="msg-ins" class="mensaje"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- === NUEVA SECCIÓN: CIERRE DE REGISTROS === -->
+    <div id="sec-cierre" class="seccion card oculto ventana">
+        <h2>🔒 Cierre de Registros</h2>
+        <p>Ingresa el código del sorteo para cerrar las inscripciones:</p>
+        <input type="text" id="cierre-codigo" placeholder="Código del sorteo" style="text-transform: uppercase;">
+        <button class="btn-rojo" onclick="cargarCierre()">📋 Cargar Sorteo</button>
+        
+        <div id="cierre-datos" class="oculto" style="margin-top: 20px;">
+            <h3 id="cierre-titulo"></h3>
+            <p>Estado actual: <span id="cierre-estado" class="etiqueta"></span></p>
+            <p>Total de participantes: <strong id="cierre-total">0</strong></p>
             
-            <div id="area-ganadores" class="oculto" style="margin-top: 25px;">
-                <h3 style="text-align:center;">🏆 GANADORES</h3>
-                <div id="lista-ganadores"></div>
+            <label>⏰ Cierre automático en segundos (0 = cerrar ahora):</label>
+            <input type="number" id="segundos-cierre" value="0" min="0" max="3600">
+            
+            <div id="cuenta-regresiva-cierre" class="cuenta-regresiva oculto"></div>
+            
+            <button class="btn-rojo" onclick="iniciarCierre()">🔒 Confirmar Cierre de Registros</button>
+            <div id="msg-cierre" class="mensaje"></div>
+            
+            <h4 style="margin-top: 20px;">Lista de Participantes:</h4>
+            <div id="lista-cierre" style="max-height: 250px; overflow-y: auto; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- === NUEVA SECCIÓN: RULETA AUTOMÁTICA === -->
+    <div id="sec-ruleta" class="seccion card oculto ventana">
+        <h2>🎡 Ruleta Automática</h2>
+        <p>Ingresa el código del sorteo para iniciar la ruleta:</p>
+        <input type="text" id="ruleta-codigo" placeholder="Código del sorteo" style="text-transform: uppercase;">
+        <button class="btn-oro" onclick="cargarRuleta()">🎯 Cargar Sorteo</button>
+        
+        <div id="ruleta-datos" class="oculto" style="margin-top: 20px;">
+            <h3 id="ruleta-titulo" style="text-align: center;"></h3>
+            <p style="text-align: center;">Ganadores a elegir: <strong id="ruleta-cant-gan">1</strong></p>
+            
+            <div class="ruleta-contenedor">
+                <div class="indicador"></div>
+                <div id="ruleta-anim" class="ruleta"></div>
+                <div class="nombre-ruleta" id="nombre-ruleta-centro">¡Gira!</div>
             </div>
             
-            <div id="area-admin" class="oculto" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
-                <h3>🔐 Panel de Control</h3>
-                <p class="aviso">⚠️ Solo el creador debería usar estas opciones</p>
-                <button class="btn-azul" onclick="cerrarInscripcion()">🔒 Cerrar Inscripciones</button>
-                <button class="btn-oro" onclick="hacerSorteo()">🎊 Realizar Sorteo</button>
-                <h4>Lista de Participantes:</h4>
-                <div id="lista-part" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+            <p style="text-align: center; margin-top: 10px;">Participantes: <span id="ruleta-cant-part">0</span></p>
+            <p id="ruleta-aviso" class="aviso" style="text-align: center;"></p>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-oro" id="btn-girar" onclick="girarRuleta()">▶️ Girar Ruleta</button>
+                <button class="btn-verde oculto" id="btn-siguiente" onclick="siguienteGanador()">➡️ Siguiente Ganador</button>
+                <button class="btn-azul oculto" id="btn-finalizar" onclick="finalizarSorteo()">✅ Finalizar Sorteo</button>
+            </div>
+            
+            <h4 style="margin-top: 25px; text-align: center;">Ganadores Seleccionados:</h4>
+            <div id="ruleta-ganadores-parcial" class="lista-final"></div>
+        </div>
+    </div>
+
+    <!-- === NUEVA SECCIÓN: GANADORES === -->
+    <div id="sec-ganadores" class="seccion card oculto ventana">
+        <h2>🏆 Ganadores</h2>
+        <p>Ingresa el código del sorteo para ver los resultados:</p>
+        <input type="text" id="ganadores-codigo" placeholder="Código del sorteo" style="text-transform: uppercase;">
+        <button class="btn-verde" onclick="cargarGanadores()">🔍 Ver Resultados</button>
+        
+        <div id="ganadores-datos" class="oculto" style="margin-top: 25px;">
+            <h3 id="gan-titulo" style="text-align: center;"></h3>
+            <p style="text-align: center;">Premio: <strong id="gan-premio"></strong></p>
+            <p style="text-align: center;">Estado: <span id="gan-estado" class="etiqueta"></span></p>
+            
+            <div id="sin-ganadores" class="oculto" style="text-align: center; margin-top: 30px;">
+                <p style="color:#ffd700; font-size: 1.2rem;">⏳ El sorteo aún no se ha realizado</p>
+            </div>
+            
+            <div id="lista-ganadores-final" class="oculto">
+                <h3 style="text-align: center; margin-top: 25px;">🎉 GANADORES DEL SORTEO 🎉</h3>
+                <div id="gan-lista-final" style="margin-top: 20px;"></div>
             </div>
         </div>
     </div>
@@ -196,15 +255,18 @@ const firebaseConfig = {
   appId: "1:473130628058:web:4d6b89989392b3c332c6e3"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // Variables globales
 let sorteoActivo = null;
 let suscripcion = null;
+let ganadoresSeleccionados = [];
+let indiceGanadorActual = 0;
+let listaParticipantesRuleta = [];
+let tiempoCierre = null;
 
-// Generar código único del sorteo
+// Generar código único
 function generarCodigo() {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let codigo = 'SOR-';
@@ -214,13 +276,12 @@ function generarCodigo() {
   return codigo;
 }
 
-// Copiar código al portapapeles con mensaje visual
+// Copiar código
 async function copiarCodigo(codigo) {
   try {
     await navigator.clipboard.writeText(codigo);
     mostrarNotificacion('¡Código copiado! ✅');
   } catch (err) {
-    // Respaldo para navegadores antiguos
     const area = document.createElement('textarea');
     area.value = codigo;
     document.body.appendChild(area);
@@ -241,39 +302,32 @@ function mostrarNotificacion(texto) {
 
 // Cambiar entre secciones
 function mostrarSeccion(nombre) {
-  // Cerrar escucha en tiempo real si existe
-  if (suscripcion) {
-    suscripcion();
-    suscripcion = null;
-  }
+  if (suscripcion) { suscripcion(); suscripcion = null; }
   sorteoActivo = null;
+  ganadoresSeleccionados = [];
+  indiceGanadorActual = 0;
+  listaParticipantesRuleta = [];
+  if (tiempoCierre) { clearInterval(tiempoCierre); tiempoCierre = null; }
   
-  // Ocultar todo y mostrar la sección seleccionada
   document.querySelectorAll('.seccion').forEach(s => s.classList.add('oculto'));
   document.getElementById(`sec-${nombre}`).classList.remove('oculto');
+  document.querySelectorAll('.mensaje').forEach(m => { m.className = 'mensaje'; m.textContent = ''; });
   
-  // Limpiar mensajes y formularios
-  document.querySelectorAll('.mensaje').forEach(m => { 
-    m.className = 'mensaje'; 
-    m.textContent = ''; 
+  // Resetear formularios
+  document.getElementById('ficha
+                          ').classList.add('oculto');
+  document.getElementById('cierre-datos').classList.add('oculto');
+  document.getElementById('ruleta-datos').classList.add('oculto');
+  document.getElementById('ganadores-datos').classList.add('oculto');
+  
+  // Limpiar campos
+  ['buscar-codigo', 'cierre-codigo', 'ruleta-codigo', 'ganadores-codigo',
+   'mi-nombre', 'mi-correo', 'segundos-cierre'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
   });
-  document.getElementById('ficha').classList.add('oculto');
-  document.getElementById('buscar-codigo').value = '';
-  
-  // Limpiar formulario de crear
-  if (nombre === 'crear') {
-    document.getElementById('s-nombre').value = '';
-    document.getElementById('s-premio').value = '';
-    document.getElementById('s-desc').value = '';
-    document.getElementById('s-ganadores').value = '1';
-  }
-  
-  // Limpiar formulario de participar
-  document.getElementById('mi-nombre').value = '';
-  document.getElementById('mi-correo').value = '';
 }
 
-// Crear nuevo sorteo
+// Crear sorteo
 async function crearSorteo() {
   const nombre = document.getElementById('s-nombre').value.trim();
   const premio = document.getElementById('s-premio').value.trim();
@@ -281,200 +335,266 @@ async function crearSorteo() {
   const cantGanadores = parseInt(document.getElementById('s-ganadores').value);
   const msg = document.getElementById('msg-crear');
   
-  // Validaciones
-  if (!nombre) {
-    msg.textContent = '⚠️ Escribe el nombre del sorteo';
-    msg.className = 'mensaje error';
-    return;
-  }
-  if (!premio) {
-    msg.textContent = '⚠️ Escribe cuál es el premio';
+  if (!nombre || !premio) {
+    msg.textContent = '⚠️ Completa nombre y premio';
     msg.className = 'mensaje error';
     return;
   }
   if (isNaN(cantGanadores) || cantGanadores < 1 || cantGanadores > 10) {
-    msg.textContent = '⚠️ La cantidad de ganadores debe ser entre 1 y 10';
+    msg.textContent = '⚠️ Ganadores entre 1 y 10';
     msg.className = 'mensaje error';
     return;
   }
 
   const nuevo = {
-    nombre, 
-    premio, 
-    descripcion: desc, 
-    cantGanadores,
-    codigo: generarCodigo(), 
-    estado: 'abierto',
-    participantes: [], 
-    ganadores: [],
+    nombre, premio, descripcion: desc, cantGanadores,
+    codigo: generarCodigo(), estado: 'abierto',
+    participantes: [], ganadores: [],
     fechaCreacion: new Date().toISOString()
   };
 
   try {
     await db.collection('sorteos').add(nuevo);
-    msg.innerHTML = `✅ <strong>Creado con éxito!</strong><br><br>
-      Código del sorteo:<br>
-      <code onclick="copiarCodigo('${nuevo.codigo}')">${nuevo.codigo}</code><br><br>
-      ⚠️ Guárdalo bien — lo necesitas para administrarlo. No se puede recuperar después.`;
+    msg.innerHTML = `✅ Creado<br>Código: <code onclick="copiarCodigo('${nuevo.codigo}')">${nuevo.codigo}</code>`;
     msg.className = 'mensaje exito';
+    document.getElementById('s-nombre').value = '';
+    document.getElementById('s-premio').value = '';
+    document.getElementById('s-desc').value = '';
   } catch (err) {
-    console.error('Error al crear:', err);
-    msg.textContent = '❌ Error: ' + err.message;
+    msg.textContent = '❌ ' + err.message;
     msg.className = 'mensaje error';
   }
 }
 
-// Buscar sorteo por código
+// Buscar sorteo (participar)
 async function buscarSorteo() {
   const codigo = document.getElementById('buscar-codigo').value.trim().toUpperCase();
-  const cargando = document.getElementById('cargando');
-  const ficha = document.getElementById('ficha');
+  if (!codigo) return alert('Escribe un código');
   
-  if (!codigo || codigo.length < 8) { 
-    alert('⚠️ Escribe un código válido'); 
-    return; 
-  }
+  const snap = await db.collection('sorteos').where('codigo','==',codigo).limit(1).get();
+  if (snap.empty) return alert('No existe');
   
-  cargando.classList.remove('oculto');
-  ficha.classList.add('oculto');
-
-  try {
-    const snap = await db.collection('sorteos').where('codigo', '==', codigo).limit(1).get();
-    cargando.classList.add('oculto');
-    
-    if (snap.empty) { 
-      alert('❌ No existe ningún sorteo con ese código'); 
-      return; 
-    }
-    
-    const doc = snap.docs[0];
-    sorteoActivo = { id: doc.id, ...doc.data() };
-    
-    // Escuchar cambios en tiempo real
-    suscripcion = db.collection('sorteos').doc(sorteoActivo.id).onSnapshot(d => {
-      if (!d.exists) {
-        alert('⚠️ El sorteo ya no existe');
-        mostrarSeccion('participar');
-        return;
-      }
-      sorteoActivo = { id: d.id, ...d.data() };
-      actualizarFicha();
-    });
-  } catch (err) {
-    cargando.classList.add('oculto');
-    console.error('Error al buscar:', err);
-    alert('Error al buscar: ' + err.message);
-  }
+  const doc = snap.docs[0];
+  sorteoActivo = { id: doc.id, ...doc.data() };
+  actualizarFichaParticipar();
+  document.getElementById('ficha').classList.remove('oculto');
 }
 
-// Actualizar visualización del sorteo
-function actualizarFicha() {
+function actualizarFichaParticipar() {
   const s = sorteoActivo;
   document.getElementById('f-nombre').textContent = s.nombre;
   document.getElementById('f-premio').textContent = s.premio;
   document.getElementById('f-desc').textContent = s.descripcion || 'Sin descripción';
   document.getElementById('f-estado').textContent = s.estado.toUpperCase();
   document.getElementById('f-estado').className = `etiqueta et-${s.estado}`;
-  document.getElementById('f-cant').textContent = s.participantes?.length || 0;
-  
-  document.getElementById('ficha').classList.remove('oculto');
-  
-  // Formulario de inscripción SOLO si está abierto
+  document.getElementById('f-cant').textContent = s.participantes.length;
   document.getElementById('form-inscribir').classList.toggle('oculto', s.estado !== 'abierto');
-  
-  // Panel de administración: cerrado o finalizado
-  document.getElementById('area-admin').classList.toggle('oculto', s.estado === 'abierto');
-  
-  // Ganadores: solo si finalizado
-  document.getElementById('area-ganadores').classList.toggle('oculto', s.estado !== 'finalizado');
-  
-  // Lista de participantes
-  const lista = document.getElementById('lista-part');
-  if (s.participantes?.length) {
-    lista.innerHTML = s.participantes.map((p, i) => 
-      `<p style="padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">${i+1}. ✅ ${p.nombre} — ${p.correo}</p>`
-    ).join('');
-  } else {
-    lista.innerHTML = '<p style="color:#999;">Sin participantes aún</p>';
-  }
-  
-  // Mostrar ganadores
-  if (s.estado === 'finalizado' && s.ganadores?.length) {
-    document.getElementById('lista-ganadores').innerHTML = 
-      s.ganadores.map(g => `<p class="ganador">🏆 ${
-          -nombre').value.trim();
+}
+
+async function inscribirme() {
+  const nombre = document.getElementById('mi-nombre').value.trim();
   const correo = document.getElementById('mi-correo').value.trim();
   const msg = document.getElementById('msg-ins');
   
   if (!nombre || !correo) {
-    msg.textContent = '⚠️ Escribe tu nombre y correo';
+    msg.textContent = '⚠️ Completa tus datos';
     msg.className = 'mensaje error';
     return;
   }
-  
-  // Evitar duplicados
-  const yaInscrito = sorteoActivo.participantes.some(
-    p => p.correo.trim().toLowerCase() === correo.trim().toLowerCase()
+  const repetido = sorteoActivo.participantes.some(p => 
+    p.correo.toLowerCase() === correo.toLowerCase()
   );
-  if (yaInscrito) {
-    msg.textContent = '⚠️ Ya estás inscrito en este sorteo';
+  if (repetido) {
+    msg.textContent = '⚠️ Ya estás inscrito';
     msg.className = 'mensaje error';
     return;
-  }
-  
-  try {
-    await db.collection('sorteos').doc(sorteoActivo.id).update({
-      participantes: firebase.firestore.FieldValue.arrayUnion({
-        nombre, 
-        correo: correo.trim().toLowerCase(), 
-        fecha: new Date().toISOString()
-      })
-    });
-    msg.textContent = '✅ ¡Inscrito con éxito!';
-    msg.className = 'mensaje exito';
-    document.getElementById('mi-nombre').value = '';
-    document.getElementById('mi-correo').value = '';
-  } catch (err) {
-    console.error('Error al inscribir:', err);
-    msg.textContent = '❌ Error: ' + err.message;
-    msg.className = 'mensaje error';
-  }
-}
-
-// Cerrar inscripciones
-async function cerrarInscripcion() {
-  if (!confirm('¿Cerrar inscripciones? Ya no se aceptarán más participantes.')) return;
-  await db.collection('sorteos').doc(sorteoActivo.id).update({ estado: 'cerrado' });
-  alert('✅ Inscripciones cerradas. Ya puedes realizar el sorteo.');
-}
-
-// Realizar el sorteo
-async function hacerSorteo() {
-  if (!sorteoActivo || !sorteoActivo.participantes || sorteoActivo.participantes.length === 0) {
-    alert('⚠️ No hay participantes para elegir');
-    return;
-  }
-  if (sorteoActivo.estado !== 'cerrado') {
-    alert('⚠️ Primero cierra las inscripciones');
-    return;
-  }
-  if (!confirm('¿Realizar el sorteo ahora? Esta acción no se puede deshacer.')) return;
-  
-  const ganadores = [];
-  const copia = [...sorteoActivo.participantes];
-  const cant = Math.min(sorteoActivo.cantGanadores, copia.length);
-  
-  for (let i = 0; i < cant; i++) {
-    const idx = Math.floor(Math.random() * copia.length);
-    ganadores.push(copia.splice(idx, 1)[0]);
   }
   
   await db.collection('sorteos').doc(sorteoActivo.id).update({
-    ganadores: ganadores,
+    participantes: firebase.firestore.FieldValue.arrayUnion({
+      nombre, correo: correo.toLowerCase(), fecha: new Date().toISOString()
+    })
+  });
+  msg.textContent = '✅ ¡Inscrito!';
+  msg.className = 'mensaje exito';
+  document.getElementById('mi-nombre').value = '';
+  document.getElementById('mi-correo').value = '';
+  
+  // Refrescar datos
+  const snap = await db.collection('sorteos').doc(sorteoActivo.id).get();
+  sorteoActivo = { id: snap.id, ...snap.data() };
+  actualizarFichaParticipar();
+}
+
+// === SECCIÓN CIERRE DE REGISTROS ===
+async function cargarCierre() {
+  const codigo = document.getElementById('cierre-codigo').value.trim().toUpperCase();
+  const snap = await db.collection('sorteos').where('codigo','==',codigo).limit(1).get();
+  if (snap.empty) return alert('Sorteo no encontrado');
+  
+  const doc = snap.docs[0];
+  sorteoActivo = { id: doc.id, ...doc.data() };
+  
+  document.getElementById('cierre-titulo').textContent = sorteoActivo.nombre;
+  document.getElementById('cierre-estado').textContent = sorteoActivo.estado.toUpperCase();
+  document.getElementById('cierre-estado').className = `etiqueta et-${sorteoActivo.estado}`;
+  document.getElementById('cierre-total').textContent = sorteoActivo.participantes.length;
+  
+  document.getElementById('lista-cierre').innerHTML = sorteoActivo.participantes.length
+    ? sorteoActivo.participantes.map((p,i) => `<p>${i+1}. ${p.nombre} — ${p.correo}</p>`).join('')
+    : '<p style="color:#999;">Sin participantes</p>';
+  
+  document.getElementById('cierre-datos').classList.remove('oculto');
+}
+
+async function iniciarCierre() {
+  const segundos = parseInt(document.getElementById('segundos-cierre').value) || 0;
+  const msg = document.getElementById('msg-cierre');
+  
+  if (sorteoActivo.estado !== 'abierto') {
+    msg.textContent = '⚠️ Ya está cerrado o finalizado';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
+  if (segundos > 0) {
+    let restante = segundos;
+    document.getElementById('cuenta-regresiva-cierre').classList.remove('oculto');
+    document.getElementById('cuenta-regresiva-cierre').textContent = `Cerrando en: ${restante}s`;
+    
+    tiempoCierre = setInterval(() => {
+      restante--;
+      document.getElementById('cuenta-regresiva-cierre').textContent = `Cerrando en: ${restante}s`;
+      if (restante <= 0) {
+        clearInterval(tiempoCierre);
+        tiempoCierre = null;
+        ejecutarCierre();
+      }
+    }, 1000);
+  } else {
+    if (!confirm('¿Cerrar inscripciones ahora?')) return;
+    ejecutarCierre();
+  }
+}
+
+async function ejecutarCierre() {
+  await db.collection('sorteos').doc(sorteoActivo.id).update({ estado: 'cerrado' });
+  alert('✅ Inscripciones cerradas');
+  cargarCierre();
+}
+
+// === SECCIÓN RULETA AUTOMÁTICA ===
+async function cargarRuleta() {
+  const codigo = document.getElementById('ruleta-codigo').value.trim().toUpperCase();
+  const snap = await db.collection('sorteos').where('codigo','==',codigo).limit(1).get();
+  if (snap.empty) return alert('Sorteo no encontrado');
+  
+  const doc = snap.docs[0];
+  sorteoActivo = { id: doc.id, ...doc.data() };
+  
+  if (sorteoActivo.estado !== 'cerrado') {
+    return alert('⚠️ Primero cierra las inscripciones');
+  }
+  if (sorteoActivo.participantes.length === 0) {
+    return alert('⚠️ No hay participantes');
+  }
+  
+  ganadoresSeleccionados = [];
+  indiceGanadorActual = 0;
+  listaParticipantesRuleta = [...sorteoActivo.participantes];
+  
+  document.getElementById('ruleta-titulo').textContent = sorteoActivo.nombre;
+  document.getElementById('ruleta-cant-gan').textContent = sorteoActivo.cantGanadores;
+  document.getElementById('ruleta-cant-part').textContent = listaParticipantesRuleta.length;
+  document.getElementById('ruleta-ganadores-parcial').innerHTML = '';
+  document.getElementById('nombre-ruleta-centro').textContent = '¡Gira!';
+  document.getElementById('btn-girar').classList.remove('oculto');
+  document.getElementById('btn-siguiente').classList.add('oculto');
+  document.getElementById('btn-finalizar').classList.add('oculto');
+  
+  document.getElementById('ruleta-datos').classList.remove('oculto');
+}
+
+function girarRuleta() {
+  if (listaParticipantesRuleta.length === 0) {
+    alert('No quedan participantes');
+    return;
+  }
+  
+  const ruleta = document.getElementById('ruleta-anim');
+  const ganadorIdx = Math.floor(Math.random() * listaParticipantesRuleta.length);
+  const ganador = listaParticipantesRuleta[ganadorIdx];
+  
+  // Girar ruleta
+  const vueltas = 5 + Math.random() * 3;
+  const grados = vueltas * 360 + Math.random() * 360;
+  ruleta.style.transform = `rotate(${grados}deg)`;
+  
+  // Esperar y mostrar ganador
+  setTimeout(() => {
+    ganadoresSeleccionados.push(ganador);
+    listaParticipantesRuleta.splice(ganadorIdx, 1);
+    indiceGanadorActual++;
+    
+    document.getElementById('nombre-ruleta-centro').innerHTML = `🏆 ${ganador.nombre}`;
+    document.getElementById('ruleta-ganadores-parcial').innerHTML = 
+      ganadoresSeleccionados.map((g,i) => `<p class="ganador">${i+1}. ${g.nombre}</p>`).join('');
+    
+    if (ganadoresSeleccionados.length < sorteoActivo.cantGanadores && listaParticipantesRuleta.length > 0) {
+      document.getElementById('btn-girar').classList.add('oculto');
+      document.getElementById('btn-siguiente').classList.remove('oculto');
+    } else {
+      document.getElementById('btn-girar').classList.add('oculto');
+      document.getElementById('btn-siguiente').classList.add('oculto');
+      document.getElementById('btn-finalizar').classList.remove('oculto');
+    }
+  }, 4000);
+}
+
+function siguienteGanador() {
+  document.getElementById('ruleta-anim').style.transform = 'rotate(0deg)';
+  document.getElementById('nombre-ruleta-centro').textContent = 'Siguiente...';
+  document.getElementById('btn-siguiente').classList.add('oculto');
+  document.getElementById('btn-girar').classList.remove('oculto');
+}
+
+async function finalizarSorteo() {
+  if (!confirm('¿Finalizar sorteo? No se puede deshacer')) return;
+  
+  await db.collection('sorteos').doc(sorteoActivo.id).update({
+    ganadores: ganadoresSeleccionados,
     estado: 'finalizado'
   });
   
-  alert('🎉 ¡Sorteo realizado! Revisa la sección de ganadores');
+  alert('🎉 ¡Sorteo finalizado! Ve a la pestaña Ganadores');
+  document.getElementById('btn-finalizar').classList.add('oculto');
+}
+
+// === SECCIÓN GANADORES ===
+async function cargarGanadores() {
+  const codigo = document.getElementById('ganadores-codigo').value.trim().toUpperCase();
+  const snap = await db.collection('sorteos').where('codigo','==',codigo).limit(1).get();
+  if (snap.empty) return alert('Sorteo no encontrado');
+  
+  const doc = snap.docs[0];
+  sorteoActivo = { id: doc.id, ...doc.data() };
+  
+  document.getElementById('gan-titulo').textContent = sorteoActivo.nombre;
+  document.getElementById('gan-premio').textContent = sorteoActivo.premio;
+  document.getElementById('gan-estado').textContent = sorteoActivo.estado.toUpperCase();
+  document.getElementById('gan-estado').className = `etiqueta et-${sorteoActivo.estado}`;
+  
+  if (sorteoActivo.estado === 'finalizado' && sorteoActivo.ganadores.length > 0) {
+    document.getElementById('sin-ganadores').classList.add('oculto');
+    document.getElementById('lista-ganadores-final').classList.remove('oculto');
+    document.getElementById('gan-lista-final').innerHTML = 
+      sorteoActivo.ganadores.map(g => `<p class="ganador">🏆 ${g.nombre}<br><small>${g.correo}</small></p>`).join('');
+  } else {
+    document.getElementById('sin-ganadores').classList.remove('oculto');
+    document.getElementById('lista-ganadores-final').classList.add('oculto');
+  }
+  
+  document.getElementById('ganadores-datos').classList.remove('oculto');
 }
 </script>
 
