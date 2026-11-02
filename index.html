@@ -32,6 +32,7 @@
         code:hover { background: #222; }
         .ganador { font-size: 1.4rem; color: #ffd700; font-weight: bold; margin: 10px 0; text-align: center; }
         .cargando { text-align: center; padding: 20px; color: #ffd700; }
+        .aviso { font-size: 0.85rem; color: #ffd700; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -63,6 +64,7 @@
         
         <button class="btn-oro" onclick="crearSorteo()">🚀 Crear Sorteo</button>
         <div id="msg-crear" class="mensaje"></div>
+        <p class="aviso">⚠️ Guarda el código generado — es tu llave de administración</p>
     </div>
 
     <!-- SECCIÓN: PARTICIPAR POR CÓDIGO -->
@@ -96,6 +98,7 @@
             
             <div id="area-admin" class="oculto" style="margin-top: 25px; border-top: 1px solid #444; padding-top: 20px;">
                 <h3>🔐 Panel de Control</h3>
+                <p class="aviso">Solo quien creó el sorteo debería usar estas opciones</p>
                 <button class="btn-azul" onclick="cerrarInscripcion()">🔒 Cerrar Inscripciones</button>
                 <button class="btn-oro" onclick="hacerSorteo()">🎊 Realizar Sorteo</button>
                 <h4>Lista de Participantes:</h4>
@@ -129,13 +132,20 @@ function generarCodigo() {
 }
 
 function mostrarSeccion(nombre) {
-  if (suscripcion) suscripcion();
-  suscripcion = null;
+  if (suscripcion) {
+    suscripcion();
+    suscripcion = null;
+  }
   sorteoActivo = null;
   
   document.querySelectorAll('.seccion').forEach(s => s.classList.add('oculto'));
   document.getElementById(`sec-${nombre}`).classList.remove('oculto');
-  document.querySelectorAll('.mensaje').forEach(m => { m.className = 'mensaje'; m.textContent = ''; });
+  document.querySelectorAll('.mensaje').forEach(m => { 
+    m.className = 'mensaje'; 
+    m.textContent = ''; 
+  });
+  document.getElementById('ficha').classList.add('oculto');
+  document.getElementById('buscar-codigo').value = '';
 }
 
 async function crearSorteo() {
@@ -152,15 +162,20 @@ async function crearSorteo() {
   }
 
   const nuevo = {
-    nombre, premio, descripcion: desc, cantGanadores,
-    codigo: generarCodigo(), estado: 'abierto',
-    participantes: [], ganadores: [],
+    nombre, 
+    premio, 
+    descripcion: desc, 
+    cantGanadores,
+    codigo: generarCodigo(), 
+    estado: 'abierto',
+    participantes: [], 
+    ganadores: [],
     fechaCreacion: new Date().toISOString()
   };
 
   try {
     await db.collection('sorteos').add(nuevo);
-    msg.innerHTML = `✅ <strong>Creado con éxito!</strong><br><br>Código:<br><code onclick="navigator.clipboard.writeText('${nuevo.codigo}'); alert('¡Copiado!')">${nuevo.codigo}</code>`;
+    msg.innerHTML = `✅ <strong>Creado con éxito!</strong><br><br>Código del sorteo:<br><code onclick="navigator.clipboard.writeText('${nuevo.codigo}'); alert('¡Copiado al portapapeles!')">${nuevo.codigo}</code><br><br>Guárdalo, lo necesitas para administrarlo.`;
     msg.className = 'mensaje exito';
     document.getElementById('s-nombre').value = '';
     document.getElementById('s-premio').value = '';
@@ -176,28 +191,38 @@ async function buscarSorteo() {
   const cargando = document.getElementById('cargando');
   const ficha = document.getElementById('ficha');
   
-  if (!codigo) { alert('Escribe un código'); return; }
+  if (!codigo) { 
+    alert('Escribe un código válido'); 
+    return; 
+  }
   
   cargando.classList.remove('oculto');
   ficha.classList.add('oculto');
 
   try {
-    const snap = await db.collection('sorteos').where('codigo', '==', codigo).get();
+    const snap = await db.collection('sorteos').where('codigo', '==', codigo).limit(1).get();
     cargando.classList.add('oculto');
     
-    if (snap.empty) { alert('❌ No existe ese sorteo'); return; }
+    if (snap.empty) { 
+      alert('❌ No existe ningún sorteo con ese código'); 
+      return; 
+    }
     
     const doc = snap.docs[0];
     sorteoActivo = { id: doc.id, ...doc.data() };
     
     suscripcion = db.collection('sorteos').doc(sorteoActivo.id).onSnapshot(d => {
-      if (!d.exists) return;
+      if (!d.exists) {
+        alert('⚠️ El sorteo ya no existe');
+        mostrarSeccion('participar');
+        return;
+      }
       sorteoActivo = { id: d.id, ...d.data() };
       actualizarFicha();
     });
   } catch (err) {
     cargando.classList.add('oculto');
-    alert('Error: ' + err.message);
+    alert('Error al buscar: ' + err.message);
   }
 }
 
@@ -211,14 +236,22 @@ function actualizarFicha() {
   document.getElementById('f-cant').textContent = s.participantes.length;
   
   document.getElementById('ficha').classList.remove('oculto');
+  
+  // Inscripción solo si está abierto
   document.getElementById('form-inscribir').classList.toggle('oculto', s.estado !== 'abierto');
+  
+  // Panel de administración: visible cuando está cerrado o finalizado
   document.getElementById('area-admin').classList.toggle('oculto', s.estado === 'abierto');
+  
+  // Ganadores solo si finalizado
   document.getElementById('area-ganadores').classList.toggle('oculto', s.estado !== 'finalizado');
   
+  // Lista de participantes
   document.getElementById('lista-part').innerHTML = s.participantes.length
-    ? s.participantes.map(p => `<p>✅ ${p.nombre} — ${p.correo}</p>`).join('')
-    : '<p style="color:#999;">Sin participantes</p>';
+    ? s.participantes.map((p, i) => `<p>${i+1}. ✅ ${p.nombre} — ${p.correo}</p>`).join('')
+    : '<p style="color:#999;">Sin participantes aún</p>';
   
+  // Mostrar ganadores
   if (s.estado === 'finalizado') {
     document.getElementById('lista-ganadores').innerHTML = 
       s.ganadores.map(g => `<p class="ganador">🏆 ${g.nombre}</p>`).join('');
@@ -236,10 +269,22 @@ async function inscribirme() {
     return;
   }
   
+  // Evitar duplicados
+  const yaInscrito = sorteoActivo.participantes.some(
+    p => p.correo.trim().toLowerCase() === correo.trim().toLowerCase()
+  );
+  if (yaInscrito) {
+    msg.textContent = '⚠️ Ya estás inscrito en este sorteo';
+    msg.className = 'mensaje error';
+    return;
+  }
+  
   try {
     await db.collection('sorteos').doc(sorteoActivo.id).update({
       participantes: firebase.firestore.FieldValue.arrayUnion({
-        nombre, correo, fecha: new Date().toISOString()
+        nombre, 
+        correo: correo.trim().toLowerCase(), 
+        fecha: new Date().toISOString()
       })
     });
     msg.textContent = '✅ ¡Inscrito con éxito!';
@@ -253,17 +298,21 @@ async function inscribirme() {
 }
 
 async function cerrarInscripcion() {
-  if (!confirm('¿Cerrar inscripciones? Ya no se aceptan más.')) return;
+  if (!confirm('¿Cerrar inscripciones? Ya no se aceptarán más participantes.')) return;
   await db.collection('sorteos').doc(sorteoActivo.id).update({ estado: 'cerrado' });
-  alert('✅ Inscripciones cerradas');
+  alert('✅ Inscripciones cerradas. Ya puedes realizar el sorteo.');
 }
 
 async function hacerSorteo() {
   if (!sorteoActivo || sorteoActivo.participantes.length === 0) {
-    alert('⚠️ No hay participantes');
+    alert('⚠️ No hay participantes para elegir');
     return;
   }
-  if (!confirm('¿Realizar el sorteo ahora?')) return;
+  if (sorteoActivo.estado !== 'cerrado') {
+    alert('⚠️ Primero cierra las inscripciones');
+    return;
+  }
+  if (!confirm('¿Realizar el sorteo ahora? Esta acción no se puede deshacer.')) return;
   
   const ganadores = [];
   const copia = [...sorteoActivo.participantes];
@@ -279,7 +328,7 @@ async function hacerSorteo() {
     estado: 'finalizado'
   });
   
-  alert('🎉 ¡Sorteo realizado! Ve la lista de ganadores');
+  alert('🎉 ¡Sorteo realizado! Revisa la sección de ganadores');
 }
 </script>
 
